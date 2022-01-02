@@ -72,11 +72,11 @@ class DataBaseHandler:
     
     def filter_best_offer(self, conn):
         """ return the best offer today"""
-        sql = ''' SELECT MIN(price),logo,id
+        sql = ''' SELECT MIN(price),logo,id,actual
         FROM offers; '''
         cur = conn.cursor()
         cur.execute(sql)
         conn.commit()
         rows = cur.fetchall()
-        
+
         return rows
