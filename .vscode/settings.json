@@ -1,0 +1,11 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "database": "${workspaceFolder:Ceneo-WebScraping}/Data.db",
+            "name": "localhost"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
+}
