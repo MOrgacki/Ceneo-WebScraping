@@ -10,7 +10,8 @@ class DataBaseHandler:
             sql_create_offers_table = """ CREATE TABLE IF NOT EXISTS offers (
                                                 id varchar(500) PRIMARY KEY,
                                                 logo text,
-                                                price integer
+                                                price integer,
+                                                actual date
                                             ); """
 
             # create a database connection
@@ -58,11 +59,24 @@ class DataBaseHandler:
         :param conn:
         :param logo:
         :param price:
+        :param actual:
         :return: offer id
         """
-        sql = ''' INSERT INTO offers(id,logo,price)
-                VALUES(?,?,?) '''
+        sql = ''' INSERT INTO offers(id,logo,price,actual)
+                VALUES(?,?,?,?) '''
         cur = conn.cursor()
         cur.execute(sql, offer)
         conn.commit()
         return cur.lastrowid
+
+    
+    def filter_best_offer(self, conn):
+        """ return the best offer today"""
+        sql = ''' SELECT MIN(price),logo,id
+        FROM offers; '''
+        cur = conn.cursor()
+        cur.execute(sql)
+        conn.commit()
+        rows = cur.fetchall()
+        
+        return rows
