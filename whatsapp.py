@@ -1,10 +1,13 @@
 from twilio.rest import Client
-
+from dotenv import dotenv_values
 
 class WhatsappHandler:
+    values = dotenv_values()
+    sid = values["TWILIO_ACCOUNT_SID"]
+    token = values["TWILIO_AUTH_TOKEN"]
 # client credentials are read from TWILIO_ACCOUNT_SID and AUTH_TOKEN
     def __init__(self):
-        self.client = Client()
+        self.client = Client(self.sid,self.token)
         self.from_whatsapp_number='whatsapp:+14155238886'
         self.to_whatsapp_number='whatsapp:+48535964737'
 

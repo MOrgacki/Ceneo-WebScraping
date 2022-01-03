@@ -35,7 +35,9 @@ def gather_date(db,whatsapp, conn):
     # whatsapp.send_message('Witaj Marcin!👋\n\nW dniu {3} 📅\nZnalazlem oferte dla: {page_url}  \nCena: {0}PLN 🏷️  \nFirma: {1} 🛒\n'.format(*best_offer[0][0]))
 
     print(logos, prices)
-# div class product-offer__container
+
+
+
 if __name__ == '__main__':
     main()
     

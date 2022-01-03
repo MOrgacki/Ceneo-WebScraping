@@ -80,3 +80,6 @@ class DataBaseHandler:
         rows = cur.fetchall()
 
         return rows
+    
+    def compare_offers(db, conn):
+        best_offer = db.filter_best_offer(conn)
