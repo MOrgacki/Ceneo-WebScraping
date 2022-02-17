@@ -1,8 +1,11 @@
 import sqlite3
 from sqlite3 import Error
 
+from helpers import Helpers
+
 
 class DataBaseHandler:
+    helpers = Helpers()
 
     def __init__(self):
             database = r"/home/organ/Desktop/WebScraping/Ceneo-WebScraping/Data.db"
@@ -13,7 +16,13 @@ class DataBaseHandler:
                                                 price integer,
                                                 actual date
                                             ); """
-
+            
+            sql_create_legacy_offers_table = """ CREATE TABLE IF NOT EXISTS legacy_offers (
+                                                id varchar(500) PRIMARY KEY,
+                                                offer_id text,
+                                                price_date date,
+                                                store_date date
+                                            ); """
             # create a database connection
             self.conn = self.create_connection(database)
 
@@ -21,6 +30,8 @@ class DataBaseHandler:
             if self.conn is not None:
                 # create offers table
                 self.create_table(self.conn, sql_create_offers_table)
+                # create best legacy offers table
+                self.create_table(self.conn, sql_create_legacy_offers_table)
             else:
                 print("Error! cannot create the database connection.")
     
@@ -52,6 +63,23 @@ class DataBaseHandler:
             c.execute(create_table_sql)
         except Error as e:
             print(e)
+    
+    @classmethod
+    def filter_todays_best_offer(self, conn, helper: Helpers):
+        """ return the best offer today"""
+        today_date = helper.return_time()
+        try:
+                sql = ''' SELECT MIN(price),logo,id,actual
+                FROM offers WHERE actual={today_date}; '''
+                cur = conn.cursor()
+                cur.execute(sql)
+                conn.commit()
+                rows = cur.fetchall()
+
+        except Error as e:
+            print(e)
+            
+        return rows
 
     def create_offer(self, conn, offer):
         """
@@ -69,17 +97,16 @@ class DataBaseHandler:
         conn.commit()
         return cur.lastrowid
 
-    
-    def filter_best_offer(self, conn):
-        """ return the best offer today"""
-        sql = ''' SELECT MIN(price),logo,id,actual
-        FROM offers; '''
-        cur = conn.cursor()
-        cur.execute(sql)
-        conn.commit()
-        rows = cur.fetchall()
 
-        return rows
-    
-    def compare_offers(db, conn):
-        best_offer = db.filter_best_offer(conn)
+    def store_offer(self, conn, helpers):
+        """ stores best offer """
+        sql = ''' INSERT INTO legacy_offers(id, offer_id, value)
+        values (); '''
+
+        best_offer = self.filter_todays_best_offer(conn, helpers)
+        print(best_offer)
+
+
+        
+    def return_best_offer(db, conn):
+        best_offer = db.filter_todays_best_offer(conn)
