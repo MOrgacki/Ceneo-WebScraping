@@ -1,3 +1,4 @@
+from optparse import Values
 from twilio.rest import Client
 from dotenv import dotenv_values
 
@@ -8,8 +9,8 @@ class WhatsappHandler:
 # client credentials are read from TWILIO_ACCOUNT_SID and AUTH_TOKEN
     def __init__(self):
         self.client = Client(self.sid,self.token)
-        self.from_whatsapp_number='whatsapp:+14155238886'
-        self.to_whatsapp_number='whatsapp:+48535964737'
+        self.from_whatsapp_number= self.values["FROM_TEL_NR"]
+        self.to_whatsapp_number= self.values["TO_TEL_NR"]
 
 
     def send_message(self, data):

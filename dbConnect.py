@@ -17,11 +17,11 @@ class DataBaseHandler:
                                                 actual date
                                             ); """
             
-            sql_create_legacy_offers_table = """ CREATE TABLE IF NOT EXISTS legacy_offers (
+            sql_create_legacy_offers_table = """ CREATE TABLE IF NOT EXISTS best_offers (
                                                 id varchar(500) PRIMARY KEY,
-                                                offer_id text,
-                                                price_date date,
-                                                store_date date
+                                                logo text,
+                                                price integer,
+                                                actual date
                                             ); """
             # create a database connection
             self.conn = self.create_connection(database)
@@ -64,22 +64,6 @@ class DataBaseHandler:
         except Error as e:
             print(e)
     
-    @classmethod
-    def filter_todays_best_offer(self, conn, helper: Helpers):
-        """ return the best offer today"""
-        today_date = helper.return_time()
-        try:
-                sql = ''' SELECT MIN(price),logo,id,actual
-                FROM offers WHERE actual={today_date}; '''
-                cur = conn.cursor()
-                cur.execute(sql)
-                conn.commit()
-                rows = cur.fetchall()
-
-        except Error as e:
-            print(e)
-            
-        return rows
 
     def create_offer(self, conn, offer):
         """
@@ -96,17 +80,32 @@ class DataBaseHandler:
         cur.execute(sql, offer)
         conn.commit()
         return cur.lastrowid
+    
+    def today_best_offer(self, conn, best_offer):
+        """
+        Create a new offer into the offers table
+        :param conn:
+        :param logo:
+        :param price:
+        :param actual:
+        :return: offer id
+        """
+        inserted_row = None
+        sql = ''' INSERT INTO best_offers(id,logo,price,actual)
+                VALUES(?,?,?,?) '''
 
+        cur = conn.cursor()
+        cur.execute(sql, best_offer)
+        conn.commit()
+        return cur.lastrowid
 
-    def store_offer(self, conn, helpers):
-        """ stores best offer """
-        sql = ''' INSERT INTO legacy_offers(id, offer_id, value)
-        values (); '''
+    def filter_best_offer(self, conn):
+        """ return the best offer"""
+        sql = ''' SELECT id, logo, MIN(price),actual
+        FROM offers; '''
+        cur = conn.cursor()
+        cur.execute(sql)
+        conn.commit()
+        rows = cur.fetchall()
 
-        best_offer = self.filter_todays_best_offer(conn, helpers)
-        print(best_offer)
-
-
-        
-    def return_best_offer(db, conn):
-        best_offer = db.filter_todays_best_offer(conn)
+        return rows

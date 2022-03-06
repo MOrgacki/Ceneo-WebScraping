@@ -1,5 +1,6 @@
 import uuid
-from datetime import date
+import babel.dates
+import datetime
 
 class Helpers:
     def __init__(self) -> None:
@@ -9,5 +10,6 @@ class Helpers:
     def return_uuid(self) -> uuid.UUID:
         return uuid.uuid4()
 
-    def return_time(self) -> date:
-        return date.today().strftime("%d %B %Y")
+    def return_time(self) -> babel.dates:
+        now = datetime.datetime.now()
+        return babel.dates.format_date(now, 'd MMMM yyyy', locale='pl_PL')
